@@ -5,6 +5,7 @@
         v-model="newTodo"
         @keyup.enter="addTodo"
         >
+        <transition-group name="fade" enter-active-class="animated fadeInUp" leave-active-class="animated fadeOutDown">
         <div v-for="(todo, index) in todosFiltered" :key="todo.id" class="todo-item"> 
             <div class="todo-item-left"> 
                 <input type="checkbox" v-model="todo.completed">
@@ -22,6 +23,7 @@
                  &times; 
             </div>
         </div>
+        </transition-group>
 
         <div class="extra-container">
             <div><label><input type="checkbox" 
@@ -116,9 +118,10 @@ export default {
             id: this.idForTodo,
             title: this.newTodo,
             completed: false, 
+            editing: false,
         })
 
-        this.newTodo = '',
+        this.newTodo = ''
         this.idForTodo++
     },
 
@@ -131,12 +134,11 @@ export default {
         if(todo.title.trim() == '') {
             todo.title = this.beforeEditCache
         }
-
         todo.editing = false
     },
 
     cancelEdit(todo) {
-        todo.this = this.beforeEditCache
+        todo.title = this.beforeEditCache
         todo.editing = false
     },
 
@@ -157,6 +159,8 @@ export default {
 
 
 <style lang="scss">
+
+@import url("https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css");
 
 .todo-inp {
     width: 100%;
@@ -242,6 +246,14 @@ export default {
 
   .active {
     background: lightgreen;
+  }
+
+  .fade-enter-active, .fade-leave-active {
+    transition: opacity .2s;
+  }
+
+  .fade-enter, .fade-leave-to {
+    opacity: 0;
   }
 
 </style>
