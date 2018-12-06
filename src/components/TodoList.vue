@@ -21,9 +21,14 @@
             <div class="remove-item" @click="removeTodo(index)">
                  &times; 
             </div>
-
         </div>
- 
+
+        <div class="extra-container">
+            <div><label><input type="checkbox" 
+            :checked="!anyRemaining"
+            @change="checkAllTodos"> Check All</label></div>
+            <div>{{ remaining }} items left</div>
+        </div>
 
        
     </div>
@@ -52,6 +57,14 @@ export default {
         },
       ]
     }
+  },
+  computed: {
+     remaining() {
+      return this.todos.filter(todo => !todo.completed).length
+    },
+    anyRemaining() {
+      return this.remaining != 0
+    },
   },
 
   directives: {
@@ -100,6 +113,10 @@ export default {
     removeTodo(index) {
         this.todos.splice(index, 1)
     },
+
+    checkAllTodos() {
+      this.todos.forEach((todo) => todo.completed = event.target.checked)
+    }
   }
 }
 </script>
@@ -164,4 +181,15 @@ export default {
     text-decoration: line-through;
     color: grey;
   }
+
+  .extra-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 16px;
+    border-top: 1px solid lightgrey;
+    padding-top: 14px;
+    margin-bottom: 14px;
+  }
+
 </style>
