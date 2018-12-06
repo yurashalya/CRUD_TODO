@@ -28,7 +28,7 @@ export const store = new Vuex.Store({
           },
       
           anyRemaining(state, getters) {
-            return getters.remaining != 0
+            return getters.remaining != 0;
           },
       
           todosFiltered(state) {
