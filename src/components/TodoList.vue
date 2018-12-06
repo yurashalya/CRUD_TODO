@@ -1,81 +1,78 @@
 <template>
-    <div>
-        <input type="text" class="todo-inp" 
-        placeholder="What needs to be done"
-        v-model="newTodo"
-        @keyup.enter="addTodo"
-        >
-        <transition-group name="fade" enter-active-class="animated fadeInUp" leave-active-class="animated fadeOutDown">
-        <todo-item v-for="(todo, index) in todosFiltered" 
-        :key="todo.id" 
-        :todo="todo" 
-        :index="index" 
-        :checkAll="!anyRemaining"
-        @removedTodo="removeTodo"
-        @finishedEdit="finishedEdit"
-        > 
-            
-        </todo-item>
-        </transition-group>
+  <div>
+    <input type="text" class="todo-inp" placeholder="What needs to be done" v-model="newTodo" @keyup.enter="addTodo">
+    <transition-group name="fade" enter-active-class="animated fadeInUp" leave-active-class="animated fadeOutDown">
+    <todo-item v-for="todo in todosFiltered" :key="todo.id" :todo="todo" :checkAll="!anyRemaining">
+    </todo-item>
+    </transition-group>
 
-        <div class="extra-container">
-            <div><label><input type="checkbox" 
-            :checked="!anyRemaining"
-            @change="checkAllTodos"> Check All</label></div>
-            <div>{{ remaining }} items left</div>
-        </div>
-
-        <div class="extra-container">
-          <div>
-            <button :class="{ active: filter == 'all' }" @click="filter = 'all'">All</button>
-            <button :class="{ active: filter == 'active' }" @click="filter = 'active'">Active</button>
-            <button :class="{ active: filter == 'completed' }" @click="filter = 'completed'">Completed</button>
-          </div>
-
-          <div>
-            <transition name="fade">
-            <button v-if="showClearCompletedButton" @click="clearCompleted">Clear Completed</button>
-            </transition>
-          </div>
-        </div>
-
-       
+    <div class="extra-container">
+      <todo-check-all :anyRemaining="anyRemaining"></todo-check-all>
+      <todo-items-remaining :remaining="remaining" ></todo-items-remaining>
     </div>
+
+    <div class="extra-container">
+      <div>
+        <button :class="{ active: filter == 'all' }" @click="filter = 'all'">All</button>
+        <button :class="{ active: filter == 'active' }" @click="filter = 'active'">Active</button>
+        <button :class="{ active: filter == 'completed' }" @click="filter = 'completed'">Completed</button>
+      </div>
+
+      <div>
+        <transition name="fade">
+        <button v-if="showClearCompletedButton" @click="clearCompleted">Clear Completed</button>
+        </transition>
+      </div>
+
+    </div>
+  </div>
 </template>
 
 <script>
 
 import TodoItem from './TodoItem'
+import TodoItemsRemaining from './TodoItemsRemaining'
+import TodoCheckAll from './TodoCheckAll'
 
 export default {
   name: 'todo-list',
   components: {
     TodoItem,
+    TodoItemsRemaining,
+    TodoCheckAll,
   },
   data () {
     return {
       newTodo: '',
       idForTodo: 3,
-      beforeEditCache: ' ',
       filter: 'all',
       todos: [
         {
-        'id': 1,
-        'title': 'Finish Vue',
-        'completed': false,
-        'editing': false
+          'id': 1,
+          'title': 'OSDB test CRUD',
+          'completed': false,
+          'editing': false,
         },
         {
-        'id': 2,
-        'title': 'Take over world',
-        'completed': false,
-        'editing': false
+          'id': 2,
+          'title': 'David Berchiyan',
+          'completed': false,
+          'editing': false,
         },
       ]
     }
   },
+
+  created() {
+    eventBus.$on('removedTodo', (index) => this.removeTodo(index))
+    eventBus.$on('finishedEdit', (data) => this.finishedEdit(data))
+    // eventBus.$on('checkAllChanged', (checked) => this.checkAllTodos(checked))
+    // eventBus.$on('filterChanged', (filter) => this.filter = filter)
+    // eventBus.$on('clearCompletedTodos', () => this.clearCompleted())
+  },
+
   computed: {
-     remaining() {
+    remaining() {
       return this.todos.filter(todo => !todo.completed).length
     },
 
@@ -93,31 +90,29 @@ export default {
       }
       return this.todos
     },
+
     showClearCompletedButton() {
       return this.todos.filter(todo => todo.completed).length > 0
     }
   },
-   
+
   methods: {
     addTodo() {
-
-        if(this.newTodo.trim().length == 0) {
-            return
-        }
-
-        this.todos.push({
-            id: this.idForTodo,
-            title: this.newTodo,
-            completed: false, 
-            editing: false,
-        })
-
-        this.newTodo = ''
-        this.idForTodo++
+      if (this.newTodo.trim().length == 0) {
+        return
+      }
+      this.todos.push({
+        id: this.idForTodo,
+        title: this.newTodo,
+        completed: false,
+      })
+      this.newTodo = ''
+      this.idForTodo++
     },
 
-    removeTodo(index) {
-        this.todos.splice(index, 1)
+    removeTodo(id) {
+      const index = this.todos.findIndex((item) => item.id == id)
+      this.todos.splice(index, 1)
     },
 
     checkAllTodos() {
@@ -139,9 +134,9 @@ export default {
 
 <style lang="scss">
 
-@import url("https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css");
+  @import url("https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css");
 
-.todo-inp {
+  .todo-inp {
     width: 100%;
     padding: 10px 18px;
     font-size: 18px;
@@ -169,7 +164,7 @@ export default {
     }
   }
 
-  .todo-item-left { 
+  .todo-item-left { // later
     display: flex;
     align-items: center;
   }
@@ -186,7 +181,7 @@ export default {
     margin-left: 12px;
     width: 100%;
     padding: 10px;
-    border: 1px solid #ccc;
+    border: 1px solid #ccc; 
     font-family: 'Avenir', Helvetica, Arial, sans-serif;
 
     &:focus {
@@ -194,7 +189,7 @@ export default {
     }
   }
 
-   .completed {
+  .completed {
     text-decoration: line-through;
     color: grey;
   }
@@ -213,6 +208,7 @@ export default {
     font-size: 14px;
     background-color: white;
     appearance: none;
+    border: 1px solid lightgrey;
 
     &:hover {
       background: lightgreen;
@@ -226,7 +222,7 @@ export default {
   .active {
     background: lightgreen;
   }
-
+  
   .fade-enter-active, .fade-leave-active {
     transition: opacity .2s;
   }
