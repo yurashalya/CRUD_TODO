@@ -51,8 +51,14 @@
 </template>
 
 <script>
+
+import TodoItem from './TodoItem'
+
 export default {
   name: 'todo-list',
+  components: {
+    TodoItem,
+  },
   data () {
     return {
       newTodo: '',
