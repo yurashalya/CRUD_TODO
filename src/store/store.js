@@ -57,6 +57,10 @@ export const store = new Vuex.Store({
               })
         },
 
+        checkAll(state, checked) {
+            state.todos.forEach(todo => (todo.completed = event.target.checked))
+        },
+
         updateFilter(state, filter) {
             state.filter = filter
         },
