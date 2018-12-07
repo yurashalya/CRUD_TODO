@@ -7,15 +7,15 @@
     </transition-group>
 
     <div class="extra-container">
-      <todo-check-all :anyRemaining="anyRemaining"></todo-check-all>
-      <todo-items-remaining :remaining="remaining" ></todo-items-remaining>
+      <todo-check-all></todo-check-all>
+      <todo-items-remaining></todo-items-remaining>
     </div>
 
     <div class="extra-container">
       <todo-filtered></todo-filtered>
       <div>
         <transition name="fade">
-          <todo-clear-completed :showClearCompletedButton="showClearCompletedButton"></todo-clear-completed>
+          <todo-clear-completed></todo-clear-completed>
         </transition>
       </div>
 
@@ -63,16 +63,16 @@ export default {
   },
 
   created() {
-    eventBus.$on('removedTodo', (index) => this.removeTodo(index))
-    eventBus.$on('finishedEdit', (data) => this.finishedEdit(data))
+    // eventBus.$on('removedTodo', (index) => this.removeTodo(index))
+    // eventBus.$on('finishedEdit', (data) => this.finishedEdit(data))
     eventBus.$on('checkAllChanged', (checked) => this.checkAllTodos(checked))
     eventBus.$on('filterChanged', (filter) => this.$store.state.filter = filter)
     eventBus.$on('clearCompletedTodos', () => this.clearCompleted())
   },
 
   beforeDestroy() {
-    eventBus.$off('removedTodo')
-    eventBus.$off('finishedEdit')
+    // eventBus.$off('removedTodo')
+    // eventBus.$off('finishedEdit')
     eventBus.$off('checkAllChanged')
     eventBus.$off('filterChanged')
     eventBus.$off('clearCompletedTodos')
@@ -110,13 +110,13 @@ export default {
       this.idForTodo++
     },
 
-    removeTodo(id) {
-      const index = this.$store.state.todos.findIndex((item) => item.id == id)
-      this.$store.state.todos.splice(index, 1)
-    },
+    // removeTodo(id) {
+    //   const index = this.$store.state.todos.findIndex((item) => item.id == id)
+    //   this.$store.state.todos.splice(index, 1)
+    // },
 
     checkAllTodos() {
-      this.$store.state.todos.forEach((todo) => todo.completed = event.target.checked)
+      this.$store.state.todos.forEach(todo => (todo.completed = event.target.checked))
     },
 
     clearCompleted() {
@@ -124,7 +124,7 @@ export default {
     },
 
     finishedEdit(data) {
-      const index = this.$store.state.todos.findIndex((item) => item.id == data.id)
+      const index = this.$store.state.todos.findIndex(item => item.id == data.id)
       this.$store.state.todos.splice(index, 1, data)
     }
   }
