@@ -57,6 +57,10 @@ export const store = new Vuex.Store({
               })
         },
 
+        updateFilter(state, filter) {
+            state.filter = filter
+        },
+
         clearCompleted(state) {
             state.todos = state.todos.filter(todo => !todo.completed);
         }
